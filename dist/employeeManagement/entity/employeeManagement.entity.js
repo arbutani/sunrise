@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Employee = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const employeeSalary_entity_1 = require("../../employeeSalaryManagement/entity/employeeSalary.entity");
 const employeeType_enum_1 = require("../../enum/employeeManagement/employeeType.enum");
 let Employee = class Employee extends sequelize_typescript_1.Model {
 };
@@ -26,8 +25,11 @@ __decorate([
     __metadata("design:type", String)
 ], Employee.prototype, "id", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => employeeSalary_entity_1.EmployeeSalary),
-    __metadata("design:type", Array)
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true,
+    }),
+    __metadata("design:type", String)
 ], Employee.prototype, "employee_salary", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
@@ -65,7 +67,7 @@ __decorate([
 ], Employee.prototype, "password", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.ENUM(employeeType_enum_1.UsersType.ADMIN, employeeType_enum_1.UsersType.STORE_MANAGER, employeeType_enum_1.UsersType.DELIVERY_DRIVER, employeeType_enum_1.UsersType.STORE_SUPERVISOR),
+        type: sequelize_typescript_1.DataType.ENUM(employeeType_enum_1.EmployeeType.ADMIN, employeeType_enum_1.EmployeeType.STORE_MANAGER, employeeType_enum_1.EmployeeType.DELIVERY_DRIVER, employeeType_enum_1.EmployeeType.STORE_SUPERVISOR),
     }),
     __metadata("design:type", String)
 ], Employee.prototype, "employee_type", void 0);

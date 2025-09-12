@@ -11,25 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeeRequestDto = void 0;
 const class_validator_1 = require("class-validator");
+const employeeType_enum_1 = require("../../enum/employeeManagement/employeeType.enum");
 class EmployeeRequestDto {
-    reference_number;
-    reference_number_date;
     employee_name;
     email_address;
     password;
     employee_type;
 }
 exports.EmployeeRequestDto = EmployeeRequestDto;
-__decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: 'Reference number is required' }),
-    (0, class_validator_1.IsString)({ message: 'Reference number must be a string' }),
-    __metadata("design:type", String)
-], EmployeeRequestDto.prototype, "reference_number", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: 'Reference number date is required' }),
-    (0, class_validator_1.IsString)({ message: 'Reference number date must be a string' }),
-    __metadata("design:type", String)
-], EmployeeRequestDto.prototype, "reference_number_date", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'Employee name is required' }),
     (0, class_validator_1.IsString)({ message: 'Employee name must be a string' }),
@@ -47,7 +36,9 @@ __decorate([
 ], EmployeeRequestDto.prototype, "password", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'Employee type is required' }),
-    (0, class_validator_1.IsString)({ message: 'Employee type must be a string' }),
+    (0, class_validator_1.IsEnum)(employeeType_enum_1.EmployeeType, {
+        message: 'Employee type must be one of the allowed values',
+    }),
     __metadata("design:type", String)
 ], EmployeeRequestDto.prototype, "employee_type", void 0);
 //# sourceMappingURL=employeeManagementRequest.dto.js.map

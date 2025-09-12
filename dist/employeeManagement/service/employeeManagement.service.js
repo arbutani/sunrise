@@ -80,10 +80,25 @@ let EmployeeService = class EmployeeService {
             if (findEmployee) {
                 throw this.errorMessageService.GeneralErrorCore('Employee with this email address already exists', 200);
             }
+            const lastEmployee = await this.employeeRepository.findOne({
+                order: [['createdAt', 'DESC']],
+            });
+            let nextSeriesNumber = 1;
+            if (lastEmployee && lastEmployee.reference_number) {
+                const match = lastEmployee.reference_number.match(/\d+/);
+                if (match) {
+                    const lastSeriesNumber = parseInt(match[0], 10);
+                    if (!isNaN(lastSeriesNumber)) {
+                        nextSeriesNumber = lastSeriesNumber + 1;
+                    }
+                }
+            }
+            const dateString = (0, moment_1.default)().format('DDMMYY');
+            const newReferenceNumber = `E${nextSeriesNumber}-${dateString}`;
             const hashedPassword = await bcrypt.hash(requestDto.password, 10);
             const fields = {
-                reference_number: requestDto.reference_number,
-                reference_number_date: requestDto.reference_number_date,
+                reference_number: newReferenceNumber,
+                reference_number_date: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
                 employee_name: requestDto.employee_name,
                 email_address: requestDto.email_address,
                 password: hashedPassword,
@@ -148,8 +163,6 @@ let EmployeeService = class EmployeeService {
                 ? await bcrypt.hash(requestDto.password, 10)
                 : oldEmployee.password;
             const fields = {
-                reference_number: requestDto.reference_number,
-                reference_number_date: requestDto.reference_number_date,
                 employee_name: requestDto.employee_name,
                 email_address: requestDto.email_address,
                 employee_type: requestDto.employee_type,

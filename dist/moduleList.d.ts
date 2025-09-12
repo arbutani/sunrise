@@ -1,2 +1,2 @@
-import { EmployeeModule } from './employeeManagement/module/employeeManagement.module';
-export declare const moduleList: (typeof EmployeeModule)[];
+import { DatabaseModule } from './database/module/database.module';
+export declare const moduleList: (typeof DatabaseModule)[];

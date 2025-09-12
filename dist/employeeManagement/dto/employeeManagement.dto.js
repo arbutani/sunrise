@@ -11,10 +11,10 @@ class EmployeeDto {
     reference_number_date;
     employee_name;
     email_address;
-    password;
+    employee_type;
+    employee_salary;
     createdAt;
     updatedAt;
-    employee_type;
     constructor(data) {
         data = data.dataValues ? data.dataValues : data;
         this.id = data.id;
@@ -22,8 +22,8 @@ class EmployeeDto {
         this.reference_number_date = data.reference_number_date;
         this.employee_name = data.employee_name;
         this.email_address = data.email_address;
-        this.password = data.password;
         this.employee_type = data.type;
+        this.employee_salary = data.employee_salary;
         const createdAt = data.createdAt
             ? data.createdAt
             : data.created_at

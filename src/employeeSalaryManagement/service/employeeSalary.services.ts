@@ -3,7 +3,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ErrorMessageService } from 'src/shared/services/errormessage.service';
 import moment from 'moment';
 import { Sequelize } from 'sequelize-typescript';
-import { Op, WhereOptions } from 'sequelize';
 import { EmployeeSalary } from '../entity/employeeSalary.entity';
 import { Employee } from 'src/employeeManagement/entity/employeeManagement.entity';
 import { EmployeeSalaryRequestDto } from '../dto/employeeSalaryRequest.dto';

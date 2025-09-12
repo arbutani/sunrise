@@ -1,18 +1,9 @@
 /* eslint-disable prettier/prettier */
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ErrorMessageService } from 'src/shared/services/errormessage.service';
 import { SuccessResponseDto } from 'src/shared/dto/successResponse.dto';
 import { EmployeeSalaryService } from '../service/employeeSalary.services';
 import { EmployeeSalaryRequestDto } from '../dto/employeeSalaryRequest.dto';
-import { EmployeeSalaryDto } from '../dto/employeeSalary.dto';
 
 @Controller('employee-salary')
 export class EmployeeSalaryController {

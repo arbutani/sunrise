@@ -8,10 +8,11 @@ export class EmployeeDto {
   reference_number_date: string;
   employee_name: string;
   email_address: string;
-  password: string;
+  //password: string;
+  employee_type: any;
+  employee_salary: any;
   createdAt: string;
   updatedAt: string;
-  employee_type: string;
 
   constructor(data: any) {
     data = data.dataValues ? data.dataValues : data;
@@ -20,8 +21,9 @@ export class EmployeeDto {
     this.reference_number_date = data.reference_number_date;
     this.employee_name = data.employee_name;
     this.email_address = data.email_address;
-    this.password = data.password;
+    //this.password = data.password;
     this.employee_type = data.type;
+    this.employee_salary = data.employee_salary;
     const createdAt = data.createdAt
       ? data.createdAt
       : data.created_at

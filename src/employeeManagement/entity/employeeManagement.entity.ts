@@ -3,13 +3,12 @@ import {
   Column,
   CreatedAt,
   DataType,
-  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { EmployeeSalary } from 'src/employeeSalaryManagement/entity/employeeSalary.entity';
-import { UsersType } from 'src/enum/employeeManagement/employeeType.enum';
+
+import { EmployeeType } from 'src/enum/employeeManagement/employeeType.enum';
 
 @Table({
   tableName: 'employee_managment',
@@ -24,8 +23,11 @@ export class Employee extends Model<Employee> {
   })
   declare id: string;
 
-  @HasMany(() => EmployeeSalary)
-  declare employee_salary: EmployeeSalary[];
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare employee_salary: string;
 
   @Column({
     type: DataType.STRING,
@@ -58,10 +60,10 @@ export class Employee extends Model<Employee> {
 
   @Column({
     type: DataType.ENUM(
-      UsersType.ADMIN,
-      UsersType.STORE_MANAGER,
-      UsersType.DELIVERY_DRIVER,
-      UsersType.STORE_SUPERVISOR,
+      EmployeeType.ADMIN,
+      EmployeeType.STORE_MANAGER,
+      EmployeeType.DELIVERY_DRIVER,
+      EmployeeType.STORE_SUPERVISOR,
     ),
   })
   declare employee_type: string;

@@ -4,9 +4,9 @@ export declare class EmployeeDto {
     reference_number_date: string;
     employee_name: string;
     email_address: string;
-    password: string;
+    employee_type: any;
+    employee_salary: any;
     createdAt: string;
     updatedAt: string;
-    employee_type: string;
     constructor(data: any);
 }

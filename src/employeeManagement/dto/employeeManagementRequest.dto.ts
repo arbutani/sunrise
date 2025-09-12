@@ -1,16 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { EmployeeType } from 'src/enum/employeeManagement/employeeType.enum';
 
 export class EmployeeRequestDto {
-  @IsNotEmpty({ message: 'Reference number is required' })
-  @IsString({ message: 'Reference number must be a string' })
-  reference_number: string;
-
-  @IsNotEmpty({ message: 'Reference number date is required' })
-  @IsString({ message: 'Reference number date must be a string' })
-  reference_number_date: string;
-
   @IsNotEmpty({ message: 'Employee name is required' })
   @IsString({ message: 'Employee name must be a string' })
   employee_name: string;

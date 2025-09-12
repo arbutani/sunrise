@@ -8,12 +8,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: [
-      "http://localhost",
-      "http://127.0.0.1:5501",
-      //"http://localhost:3000", // ✅ Add for nextjs
-
+      'http://localhost',
+      'http://127.0.0.1:5501',
+      'http://localhost:3000', // ✅ Add for nextjs
     ],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
   app.useGlobalPipes(
@@ -24,14 +23,16 @@ async function bootstrap() {
             status: false,
             message: errors.map((error) => ({
               field: error.property,
-              message: error.constraints ? error.constraints[Object.keys(error.constraints)[0]] : "",
+              message: error.constraints
+                ? error.constraints[Object.keys(error.constraints)[0]]
+                : '',
             })),
           },
-          422
-        )
+          422,
+        );
       },
-    })
+    }),
   );
-  await app.listen(process.env.PORT ?? 3003);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

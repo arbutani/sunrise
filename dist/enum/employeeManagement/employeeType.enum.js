@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersType = void 0;
-var UsersType;
-(function (UsersType) {
-    UsersType["ADMIN"] = "admin";
-    UsersType["STORE_MANAGER"] = "store manager";
-    UsersType["DELIVERY_DRIVER"] = "delivery driver";
-    UsersType["STORE_SUPERVISOR"] = "store supervisor";
-})(UsersType || (exports.UsersType = UsersType = {}));
+exports.EmployeeType = void 0;
+var EmployeeType;
+(function (EmployeeType) {
+    EmployeeType["ADMIN"] = "admin";
+    EmployeeType["STORE_MANAGER"] = "store manager";
+    EmployeeType["DELIVERY_DRIVER"] = "delivery driver";
+    EmployeeType["STORE_SUPERVISOR"] = "store supervisor";
+})(EmployeeType || (exports.EmployeeType = EmployeeType = {}));
 //# sourceMappingURL=employeeType.enum.js.map

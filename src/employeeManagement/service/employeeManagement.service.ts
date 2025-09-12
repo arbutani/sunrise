@@ -39,11 +39,35 @@ export class EmployeeService {
         );
       }
 
+      // Find the last employee to determine the next series number
+      const lastEmployee = await this.employeeRepository.findOne({
+        order: [['createdAt', 'DESC']],
+      });
+
+      let nextSeriesNumber = 1;
+      if (lastEmployee && lastEmployee.reference_number) {
+        // Use a regular expression to extract any number from the last reference_number.
+        // This makes the logic more robust and handles different formats.
+        const match = lastEmployee.reference_number.match(/\d+/);
+        if (match) {
+          const lastSeriesNumber = parseInt(match[0], 10);
+          if (!isNaN(lastSeriesNumber)) {
+            nextSeriesNumber = lastSeriesNumber + 1;
+          }
+        }
+      }
+
+      // Generate the date string in DDMMYY format as requested
+      const dateString = moment().format('DDMMYY');
+
+      // Construct the new reference number
+      const newReferenceNumber = `E${nextSeriesNumber}-${dateString}`;
+
       const hashedPassword = await bcrypt.hash(requestDto.password, 10);
 
       const fields = {
-        reference_number: requestDto.reference_number,
-        reference_number_date: requestDto.reference_number_date,
+        reference_number: newReferenceNumber,
+        reference_number_date: moment().format('YYYY-MM-DD HH:mm:ss'),
         employee_name: requestDto.employee_name,
         email_address: requestDto.email_address,
         password: hashedPassword,
@@ -126,9 +150,11 @@ export class EmployeeService {
         : oldEmployee.password;
 
       const fields = {
-        reference_number: requestDto.reference_number,
-        reference_number_date: requestDto.reference_number_date,
+        // We do not update the reference_number as it's auto-generated
+        // reference_number: requestDto.reference_number,
+        //reference_number_date: requestDto.reference_number_date,
         employee_name: requestDto.employee_name,
+
         email_address: requestDto.email_address,
         employee_type: requestDto.employee_type,
         password: hashedPassword,
