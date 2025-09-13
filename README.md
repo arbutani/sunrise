@@ -1,5 +1,5 @@
 <h1 align="center">ANKIT CREATE SUNRISE ERP SYSTEM</h1>
-<p align="center"><a></a><img herf="https://tse1.mm.bing.net/th/id/OIP.B-rEgbCbTol8qgIwoPMgEAHaHa?w=626&h=626&rs=1&pid=ImgDetMain&o=7&rm=3" /></a></p>
+<p align="center"><img src="/img_props/a1.jpg" /></p>
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
