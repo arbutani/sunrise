@@ -33,6 +33,31 @@ export class EmployeeSalaryService {
           200,
         );
       }
+
+      // Find the last employee to determine the next series number
+      const lastEmployeeSalary = await this.employeeSalaryRepository.findOne({
+        order: [['createdAt', 'DESC']],
+      });
+
+      let nextSeriesNumber = 1;
+      if (lastEmployeeSalary && lastEmployeeSalary.reference_number) {
+        // Use a regular expression to extract any number from the last reference_number.
+        // This makes the logic more robust and handles different formats.
+        const match = lastEmployeeSalary.reference_number.match(/\d+/);
+        if (match) {
+          const lastSeriesNumber = parseInt(match[0], 10);
+          if (!isNaN(lastSeriesNumber)) {
+            nextSeriesNumber = lastSeriesNumber + 1;
+          }
+        }
+      }
+
+      // Generate the date string in DDMMYY format as requested
+      const dateString = moment().format('DDMMYY');
+
+      // Construct the new reference number
+      const newReferenceNumber = `ES${nextSeriesNumber}-${dateString}`;
+
       const fields = {
         employee_id: requestDto.employee_id,
         monthly_salary: requestDto.monthly_salary,
@@ -40,8 +65,8 @@ export class EmployeeSalaryService {
         working_hour: requestDto.working_hour,
         over_time: requestDto.over_time,
         leave_day: requestDto.leave_day,
-        reference_number: requestDto.reference_number,
-        reference_number_date: requestDto.reference_number_date,
+        reference_number: newReferenceNumber,
+        reference_number_date: moment().format('YYYY-MM-DD HH:mm:ss'),
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       } as any;

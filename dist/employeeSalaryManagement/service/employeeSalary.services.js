@@ -42,6 +42,21 @@ let EmployeeSalaryService = class EmployeeSalaryService {
             if (!findEmployee) {
                 throw this.errorMessageService.GeneralErrorCore('Employee not found.', 200);
             }
+            const lastEmployeeSalary = await this.employeeSalaryRepository.findOne({
+                order: [['createdAt', 'DESC']],
+            });
+            let nextSeriesNumber = 1;
+            if (lastEmployeeSalary && lastEmployeeSalary.reference_number) {
+                const match = lastEmployeeSalary.reference_number.match(/\d+/);
+                if (match) {
+                    const lastSeriesNumber = parseInt(match[0], 10);
+                    if (!isNaN(lastSeriesNumber)) {
+                        nextSeriesNumber = lastSeriesNumber + 1;
+                    }
+                }
+            }
+            const dateString = (0, moment_1.default)().format('DDMMYY');
+            const newReferenceNumber = `ES${nextSeriesNumber}-${dateString}`;
             const fields = {
                 employee_id: requestDto.employee_id,
                 monthly_salary: requestDto.monthly_salary,
@@ -49,8 +64,8 @@ let EmployeeSalaryService = class EmployeeSalaryService {
                 working_hour: requestDto.working_hour,
                 over_time: requestDto.over_time,
                 leave_day: requestDto.leave_day,
-                reference_number: requestDto.reference_number,
-                reference_number_date: requestDto.reference_number_date,
+                reference_number: newReferenceNumber,
+                reference_number_date: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
                 createdAt: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
                 updatedAt: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
             };
