@@ -3,10 +3,12 @@ import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { EmployeeSalary } from 'src/employeeSalaryManagement/entity/employeeSalary.entity';
 
 import { EmployeeType } from 'src/enum/employeeManagement/employeeType.enum';
 
@@ -57,6 +59,9 @@ export class Employee extends Model<Employee> {
     allowNull: false,
   })
   declare password: string;
+
+  @HasMany(() => EmployeeSalary)
+  salaries: EmployeeSalary[];
 
   @Column({
     type: DataType.ENUM(

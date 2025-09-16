@@ -1,6 +1,11 @@
 import { Currencyconversionrates } from 'src/currencyConversionRates/entity/currencyConversionRates.entity';
 import { Employee } from 'src/employeeManagement/entity/employeeManagement.entity';
 import { EmployeeSalary } from 'src/employeeSalaryManagement/entity/employeeSalary.entity';
+import { ProductCategories } from 'src/productCategories/entity/productCategories.entity';
+import { Products } from 'src/products/entity/products.entity';
+import { ProductSubcategory } from 'src/productSubcategory/entity/productSubcategory.entity';
+import { Purchases } from 'src/purchases/entity/purchases.entity';
+import { Sales } from 'src/sales/entity/sales.entity';
 import { Seller } from 'src/sellers/entity/seller.entity';
 import { Vendor } from 'src/vendors/entity/vendor.entity';
-export declare const TableList: (typeof Currencyconversionrates | typeof Employee | typeof EmployeeSalary | typeof Seller | typeof Vendor)[];
+export declare const TableList: (typeof Currencyconversionrates | typeof EmployeeSalary | typeof Employee | typeof Products | typeof ProductSubcategory | typeof ProductCategories | typeof Vendor | typeof Purchases | typeof Seller | typeof Sales)[];

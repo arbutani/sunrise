@@ -1,2 +1,2 @@
-import { SellerModule } from './sellers/module/seller.module';
-export declare const moduleList: (typeof SellerModule)[];
+import { CurrencyconversionratesModule } from './currencyConversionRates/module/currencyConversionRates.module';
+export declare const moduleList: (typeof CurrencyconversionratesModule)[];

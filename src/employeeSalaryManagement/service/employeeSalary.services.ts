@@ -125,33 +125,6 @@ export class EmployeeSalaryService {
     }
   }
 
-  /*async getAll(): Promise<EmployeeSalaryDto[]> {
-    try {
-      const salaries = await this.employeeSalaryRepository.findAll({
-        include: [
-          {
-            model: this.employeeRepository,
-            attributes: [
-              'monthly_salary',
-              'working_days',
-              'working_hour',
-              'over_time',
-              'leave_day',
-              'total_attempts_day',
-              'total_payable_salary',
-              'reference_number',
-            ], // Add more fields if needed
-          },
-        ],
-        order: [['createdAt', 'DESC']],
-      });
-
-      return salaries.map((salary) => new EmployeeSalaryDto(salary));
-    } catch (error) {
-      throw this.errorMessageService.CatchHandler(error);
-    }
-  }*/
-
   async getAllEmployees() {
     try {
       const employees = await this.employeeSalaryRepository.findAll();
