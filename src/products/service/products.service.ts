@@ -7,6 +7,10 @@ import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Products } from '../entity/products.entity';
 import { ProductsRequestDto } from '../dto/productsRequest.dto';
+import { Purchases } from 'src/purchases/entity/purchases.entity';
+import { Sales } from 'src/sales/entity/sales.entity';
+import { ProductDamages } from 'src/productDamages/entity/productDamages.entity';
+import { QueryTypes } from 'sequelize'; // Import QueryTypes
 
 @Injectable()
 export class ProductsService {
@@ -48,7 +52,6 @@ export class ProductsService {
       }
 
       const dateString = moment().format('DDMMYY');
-
       const newReferenceNumber = `PR${nextSeriesNumber}-${dateString}`;
 
       const fields = {
@@ -124,7 +127,9 @@ export class ProductsService {
 
   async getProducts(id: string) {
     try {
-      const item = await this.productsRepository.findByPk(id);
+      const item = await this.productsRepository.findByPk(id, {
+        include: [Purchases, Sales, ProductDamages],
+      });
       if (!item) {
         throw this.errorMessageService.GeneralErrorCore(
           'Products not found',
@@ -139,7 +144,9 @@ export class ProductsService {
 
   async getAllProducts() {
     try {
-      const items = await this.productsRepository.findAll();
+      const items = await this.productsRepository.findAll({
+        include: [Purchases, Sales, ProductDamages],
+      });
       if (!items || items.length === 0) {
         throw this.errorMessageService.GeneralErrorCore(
           'NO Products found',
@@ -153,29 +160,61 @@ export class ProductsService {
   }
 
   async deleteProducts(id: string) {
+    const t = await this.sequelize.transaction();
     try {
-      const item = await this.productsRepository.findByPk(id);
+      const item = await this.productsRepository.findByPk(id, {
+        transaction: t,
+      });
       if (!item) {
         throw this.errorMessageService.GeneralErrorCore(
           'Products not found',
           404,
         );
       }
-      /*await this.itemPriceRepository.destroy({
-        where: { item_id: id },
-      });*/
+
+      // Correctly type the raw query result to avoid TS18046 error
+      const [relatedCount] = await this.sequelize.query<{
+        purchases_count: number;
+        sales_count: number;
+        damages_count: number;
+      }>(
+        `SELECT
+            (SELECT COUNT(*) FROM "purchases" WHERE "product_id" = '${id}') AS purchases_count,
+            (SELECT COUNT(*) FROM "sales" WHERE "product_id" = '${id}') AS sales_count,
+            (SELECT COUNT(*) FROM "product_damages" WHERE "product_id" = '${id}') AS damages_count`,
+        {
+          type: QueryTypes.SELECT, // Specify the query type
+          transaction: t,
+        },
+      );
+
+      if (
+        relatedCount.purchases_count > 0 ||
+        relatedCount.sales_count > 0 ||
+        relatedCount.damages_count > 0
+      ) {
+        throw this.errorMessageService.GeneralErrorCore(
+          'Cannot delete product with existing purchases, sales, or damages',
+          400,
+        );
+      }
+
       const deleted = await this.productsRepository.destroy({
         where: { id: id },
+        transaction: t,
       });
       if (deleted) {
+        await t.commit();
         return { message: 'Products deleted successfully' };
       } else {
+        await t.rollback();
         throw this.errorMessageService.GeneralErrorCore(
           'Failed to delete Products',
           200,
         );
       }
     } catch (error) {
+      await t.rollback();
       throw this.errorMessageService.CatchHandler(error);
     }
   }

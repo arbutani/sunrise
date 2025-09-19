@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 
 export class EmployeeSalaryRequestDto {
+  @IsOptional()
   @IsUUID('4', { message: 'Employee ID must be a valid UUID' })
   employee_id: string;
 
@@ -31,11 +32,11 @@ export class EmployeeSalaryRequestDto {
   @IsOptional()
   leave_day?: number;
 
-  @IsNotEmpty({ message: 'Reference number is required' })
+  @IsOptional()
   @IsString({ message: 'Reference number must be a string' })
   reference_number?: string;
 
-  @IsNotEmpty({ message: 'Reference number date is required' })
+  @IsOptional()
   @IsString({ message: 'Reference number date must be a string' })
   reference_number_date?: string;
 }

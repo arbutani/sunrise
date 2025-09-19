@@ -3,7 +3,9 @@
 import { Currencyconversionrates } from 'src/currencyConversionRates/entity/currencyConversionRates.entity';
 import { Employee } from 'src/employeeManagement/entity/employeeManagement.entity';
 import { EmployeeSalary } from 'src/employeeSalaryManagement/entity/employeeSalary.entity';
+import { Inventory } from 'src/inventory/entity/inventory.entity';
 import { ProductCategories } from 'src/productCategories/entity/productCategories.entity';
+import { ProductDamages } from 'src/productDamages/entity/productDamages.entity';
 import { Products } from 'src/products/entity/products.entity';
 import { ProductSubcategory } from 'src/productSubcategory/entity/productSubcategory.entity';
 import { Purchases } from 'src/purchases/entity/purchases.entity';
@@ -22,4 +24,6 @@ export const TableList = [
   Products,
   Purchases,
   Sales,
+  ProductDamages,
+  Inventory,
 ];

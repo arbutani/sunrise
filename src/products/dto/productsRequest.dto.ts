@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class ProductsRequestDto {
+  @IsOptional()
   @IsUUID('4', { message: 'Subcategory_id ID must be a valid UUID' })
   subcategory_id: string;
 

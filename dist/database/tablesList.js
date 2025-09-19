@@ -4,7 +4,9 @@ exports.TableList = void 0;
 const currencyConversionRates_entity_1 = require("../currencyConversionRates/entity/currencyConversionRates.entity");
 const employeeManagement_entity_1 = require("../employeeManagement/entity/employeeManagement.entity");
 const employeeSalary_entity_1 = require("../employeeSalaryManagement/entity/employeeSalary.entity");
+const inventory_entity_1 = require("../inventory/entity/inventory.entity");
 const productCategories_entity_1 = require("../productCategories/entity/productCategories.entity");
+const productDamages_entity_1 = require("../productDamages/entity/productDamages.entity");
 const products_entity_1 = require("../products/entity/products.entity");
 const productSubcategory_entity_1 = require("../productSubcategory/entity/productSubcategory.entity");
 const purchases_entity_1 = require("../purchases/entity/purchases.entity");
@@ -22,5 +24,7 @@ exports.TableList = [
     products_entity_1.Products,
     purchases_entity_1.Purchases,
     sales_entity_1.Sales,
+    productDamages_entity_1.ProductDamages,
+    inventory_entity_1.Inventory,
 ];
 //# sourceMappingURL=tablesList.js.map

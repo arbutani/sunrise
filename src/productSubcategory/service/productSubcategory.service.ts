@@ -7,12 +7,15 @@ import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { ProductSubcategory } from '../entity/productSubcategory.entity';
 import { ProductSubcategoryRequestDto } from '../dto/productSubcategoryRequest.dto';
+import { Products } from 'src/products/entity/products.entity';
 
 @Injectable()
 export class ProductSubcategoryService {
   constructor(
     @Inject('PRODUCT_SUBCATEGORY_REPOSITORY')
     private readonly productSubcategoryRepository: typeof ProductSubcategory,
+    @Inject('PRODUCTS_REPOSITORY')
+    private readonly productsRepository: typeof Products,
     @Inject('SEQUELIZE')
     private readonly sequelize: Sequelize,
     private readonly errorMessageService: ErrorMessageService,
@@ -33,7 +36,6 @@ export class ProductSubcategoryService {
         );
       }
 
-      // Find the last employee to determine the next series number
       const lastProductSubcategory =
         await this.productSubcategoryRepository.findOne({
           order: [['createdAt', 'DESC']],
@@ -41,8 +43,6 @@ export class ProductSubcategoryService {
 
       let nextSeriesNumber = 1;
       if (lastProductSubcategory && lastProductSubcategory.reference_number) {
-        // Use a regular expression to extract any number from the last reference_number.
-        // This makes the logic more robust and handles different formats.
         const match = lastProductSubcategory.reference_number.match(/\d+/);
         if (match) {
           const lastSeriesNumber = parseInt(match[0], 10);
@@ -52,10 +52,7 @@ export class ProductSubcategoryService {
         }
       }
 
-      // Generate the date string in DDMMYY format as requested
       const dateString = moment().format('DDMMYY');
-
-      // Construct the new reference number
       const newReferenceNumber = `PSC${nextSeriesNumber}-${dateString}`;
 
       const fields = {
@@ -142,7 +139,9 @@ export class ProductSubcategoryService {
   async getProductSubcategory(id: string) {
     try {
       const productSubcategory =
-        await this.productSubcategoryRepository.findByPk(id);
+        await this.productSubcategoryRepository.findByPk(id, {
+          include: [Products],
+        });
       if (!productSubcategory) {
         throw this.errorMessageService.GeneralErrorCore(
           'ProductSubcategory not found',
@@ -158,7 +157,9 @@ export class ProductSubcategoryService {
   async getAllproductSubcategory() {
     try {
       const productSubcategory =
-        await this.productSubcategoryRepository.findAll();
+        await this.productSubcategoryRepository.findAll({
+          include: [Products],
+        });
       if (!productSubcategory || productSubcategory.length === 0) {
         throw this.errorMessageService.GeneralErrorCore(
           'NO ProductSubcategory found',
@@ -174,30 +175,44 @@ export class ProductSubcategoryService {
   }
 
   async deleteProductSubcategory(id: string) {
+    const t = await this.sequelize.transaction();
     try {
       const productSubcategory =
-        await this.productSubcategoryRepository.findByPk(id);
+        await this.productSubcategoryRepository.findByPk(id, {
+          transaction: t,
+        });
       if (!productSubcategory) {
         throw this.errorMessageService.GeneralErrorCore(
           'ProductSubcategory not found',
           404,
         );
       }
-      /*await this.itemPriceRepository.destroy({
-        where: { item_id: id },
-      });*/
+      const productsCount = await this.productsRepository.count({
+        where: { subcategory_id: id },
+        transaction: t,
+      });
+      if (productsCount > 0) {
+        throw this.errorMessageService.GeneralErrorCore(
+          'Cannot delete subcategory with existing products',
+          400,
+        );
+      }
       const deleted = await this.productSubcategoryRepository.destroy({
         where: { id: id },
+        transaction: t,
       });
       if (deleted) {
+        await t.commit();
         return { message: 'ProductSubcategory deleted successfully' };
       } else {
+        await t.rollback();
         throw this.errorMessageService.GeneralErrorCore(
           'Failed to delete ProductSubcategory',
           200,
         );
       }
     } catch (error) {
+      await t.rollback();
       throw this.errorMessageService.CatchHandler(error);
     }
   }

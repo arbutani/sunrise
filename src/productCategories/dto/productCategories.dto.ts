@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import moment from 'moment';
+import { ProductSubcategoryDto } from 'src/productSubcategory/dto/productSubcategory.dto';
 //import * as moment from 'moment';
 
 export class ProductCategoriesDto {
@@ -10,6 +11,7 @@ export class ProductCategoriesDto {
   reference_number: string;
   createdAt: string;
   updatedAt: string;
+  subcategories: ProductSubcategoryDto[];
 
   constructor(data: any) {
     data = data.dataValues ? data.dataValues : data;
@@ -35,6 +37,11 @@ export class ProductCategoriesDto {
     if (updatedAt) {
       this.updatedAt = moment(updatedAt, 'YYYY-MM-DD HH:mm:ss').format(
         'DD-MM-YYYY hh:mm A',
+      );
+    }
+    if (data.subcategories && Array.isArray(data.subcategories)) {
+      this.subcategories = data.subcategories.map(
+        (subcategory) => new ProductSubcategoryDto(subcategory),
       );
     }
   }

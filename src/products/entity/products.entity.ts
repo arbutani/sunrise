@@ -5,11 +5,15 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { ProductDamages } from 'src/productDamages/entity/productDamages.entity';
 import { ProductSubcategory } from 'src/productSubcategory/entity/productSubcategory.entity';
+import { Purchases } from 'src/purchases/entity/purchases.entity';
+import { Sales } from 'src/sales/entity/sales.entity';
 
 @Table({
   tableName: 'products',
@@ -71,12 +75,12 @@ export class Products extends Model<Products> {
   })
   declare updatedAt: Date;
 
-  /*@HasMany(() => Purchase)
-  declare purchases: Purchase[];
+  @HasMany(() => Purchases)
+  declare purchases: Purchases[];
 
-  @HasMany(() => Sale)
-  declare sales: Sale[];
+  @HasMany(() => Sales)
+  declare sales: Sales[];
 
-  @HasMany(() => ProductDamage)
-  declare damages: ProductDamage[];*/
+  @HasMany(() => ProductDamages)
+  declare damages: ProductDamages[];
 }

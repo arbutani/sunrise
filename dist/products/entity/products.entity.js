@@ -11,7 +11,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Products = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
+const productDamages_entity_1 = require("../../productDamages/entity/productDamages.entity");
 const productSubcategory_entity_1 = require("../../productSubcategory/entity/productSubcategory.entity");
+const purchases_entity_1 = require("../../purchases/entity/purchases.entity");
+const sales_entity_1 = require("../../sales/entity/sales.entity");
 let Products = class Products extends sequelize_typescript_1.Model {
 };
 exports.Products = Products;
@@ -79,6 +82,18 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Products.prototype, "updatedAt", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => purchases_entity_1.Purchases),
+    __metadata("design:type", Array)
+], Products.prototype, "purchases", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => sales_entity_1.Sales),
+    __metadata("design:type", Array)
+], Products.prototype, "sales", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => productDamages_entity_1.ProductDamages),
+    __metadata("design:type", Array)
+], Products.prototype, "damages", void 0);
 exports.Products = Products = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: 'products',

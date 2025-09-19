@@ -1,7 +1,17 @@
 /* eslint-disable prettier/prettier */
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
+import { ProductsRequestDto } from 'src/products/dto/productsRequest.dto';
 
 export class ProductSubcategoryRequestDto {
+  @IsOptional()
   @IsUUID('4', { message: 'Category ID must be a valid UUID' })
   category_id: string;
 
@@ -13,11 +23,9 @@ export class ProductSubcategoryRequestDto {
   @IsString({ message: 'Description must be a string' })
   description: string;
 
-  /*@IsNotEmpty({ message: 'Reference number is required' })
-  @IsString({ message: 'Reference number must be a string' })
-  reference_number?: string;
-
-  @IsNotEmpty({ message: 'Reference number date is required' })
-  @IsString({ message: 'Reference number date must be a string' })
-  reference_number_date?: string;*/
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductsRequestDto)
+  products?: ProductsRequestDto[];
 }

@@ -21,28 +21,17 @@ export class EmployeeSalaryService {
   ) {}
 
   async create(requestDto: EmployeeSalaryRequestDto) {
+    const transaction = await this.sequelize.transaction();
     try {
-      const findEmployee = await this.employeeRepository.findOne({
-        where: {
-          id: requestDto.employee_id,
-        },
-      });
-      if (!findEmployee) {
-        throw this.errorMessageService.GeneralErrorCore(
-          'Employee not found.',
-          200,
-        );
-      }
-
-      // Find the last employee to determine the next series number
+      // Find the last employee salary to generate a new reference number.
+      // This is a common pattern for creating unique IDs.
       const lastEmployeeSalary = await this.employeeSalaryRepository.findOne({
         order: [['createdAt', 'DESC']],
+        transaction,
       });
 
       let nextSeriesNumber = 1;
       if (lastEmployeeSalary && lastEmployeeSalary.reference_number) {
-        // Use a regular expression to extract any number from the last reference_number.
-        // This makes the logic more robust and handles different formats.
         const match = lastEmployeeSalary.reference_number.match(/\d+/);
         if (match) {
           const lastSeriesNumber = parseInt(match[0], 10);
@@ -52,10 +41,7 @@ export class EmployeeSalaryService {
         }
       }
 
-      // Generate the date string in DDMMYY format as requested
       const dateString = moment().format('DDMMYY');
-
-      // Construct the new reference number
       const newReferenceNumber = `ES${nextSeriesNumber}-${dateString}`;
 
       const fields = {
@@ -71,16 +57,15 @@ export class EmployeeSalaryService {
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       } as any;
 
-      const employeesalary = await this.employeeSalaryRepository.create(fields);
-      if (employeesalary) {
-        return new EmployeeSalaryDto(employeesalary);
-      } else {
-        throw this.errorMessageService.GeneralErrorCore(
-          'Failed to save employee salary data.',
-          200,
-        );
-      }
+      const employeesalary = await this.employeeSalaryRepository.create(
+        fields,
+        { transaction },
+      );
+
+      await transaction.commit();
+      return new EmployeeSalaryDto(employeesalary);
     } catch (error) {
+      await transaction.rollback();
       throw this.errorMessageService.CatchHandler(error);
     }
   }
@@ -101,9 +86,13 @@ export class EmployeeSalaryService {
   }
 
   async deleteEmployee(id: string) {
+    const transaction = await this.sequelize.transaction();
     try {
-      const employeesalary = await this.employeeSalaryRepository.findByPk(id);
+      const employeesalary = await this.employeeSalaryRepository.findByPk(id, {
+        transaction,
+      });
       if (!employeesalary) {
+        await transaction.rollback();
         throw this.errorMessageService.GeneralErrorCore(
           'Employee not found',
           404,
@@ -111,16 +100,20 @@ export class EmployeeSalaryService {
       }
       const deleted = await this.employeeSalaryRepository.destroy({
         where: { id: id },
+        transaction,
       });
       if (deleted) {
+        await transaction.commit();
         return { message: 'Employee salary deleted successfully' };
       } else {
+        await transaction.rollback();
         throw this.errorMessageService.GeneralErrorCore(
           'Failed to delete Employee Salary',
           200,
         );
       }
     } catch (error) {
+      await transaction.rollback();
       throw this.errorMessageService.CatchHandler(error);
     }
   }

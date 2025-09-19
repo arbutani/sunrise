@@ -4,7 +4,9 @@ exports.moduleList = void 0;
 const currencyConversionRates_module_1 = require("./currencyConversionRates/module/currencyConversionRates.module");
 const database_module_1 = require("./database/module/database.module");
 const employeeManagement_module_1 = require("./employeeManagement/module/employeeManagement.module");
+const inventory_module_1 = require("./inventory/module/inventory.module");
 const productCategories_module_1 = require("./productCategories/module/productCategories.module");
+const productDamages_module_1 = require("./productDamages/module/productDamages.module");
 const products_module_1 = require("./products/module/products.module");
 const productSubcategory_module_1 = require("./productSubcategory/module/productSubcategory.module");
 const purchases_module_1 = require("./purchases/module/purchases.module");
@@ -24,5 +26,7 @@ exports.moduleList = [
     products_module_1.ProductsModule,
     purchases_module_1.PurchasesModule,
     sales_module_1.SalesModule,
+    productDamages_module_1.ProductDamagesModule,
+    inventory_module_1.InventoryModule,
 ];
 //# sourceMappingURL=moduleList.js.map

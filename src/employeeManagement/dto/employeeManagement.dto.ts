@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import moment from 'moment';
+import { EmployeeSalaryDto } from 'src/employeeSalaryManagement/dto/employeeSalary.dto';
 
 export class EmployeeDto {
   id: string;
@@ -11,6 +12,7 @@ export class EmployeeDto {
   //password: string;
   employee_type: any;
   employee_salary: any;
+  salaries: EmployeeSalaryDto[];
   createdAt: string;
   updatedAt: string;
 
@@ -24,6 +26,16 @@ export class EmployeeDto {
     //this.password = data.password;
     this.employee_type = data.type;
     this.employee_salary = data.employee_salary;
+
+    // Map the salaries array from the input data to EmployeeSalaryDto instances
+    if (data.salaries && Array.isArray(data.salaries)) {
+      this.salaries = data.salaries.map(
+        (salary) => new EmployeeSalaryDto(salary),
+      );
+    } else {
+      this.salaries = []; // Initialize as an empty array if no salaries exist
+    }
+
     const createdAt = data.createdAt
       ? data.createdAt
       : data.created_at

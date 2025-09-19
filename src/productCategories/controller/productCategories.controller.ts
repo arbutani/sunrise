@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable prettier/prettier */
+
 import {
   Body,
   Controller,
@@ -9,15 +9,20 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+
 import { ErrorMessageService } from 'src/shared/services/errormessage.service';
+
 import { SuccessResponseDto } from 'src/shared/dto/successResponse.dto';
+
 import { ProductCategoriesRequestDto } from '../dto/productCategoriesRequest.dto';
+
 import { ProductCategoriesService } from '../service/productCategories.service';
 
 @Controller('productCategories')
 export class ProductCategoriesController {
   constructor(
     private readonly productCategoriesService: ProductCategoriesService,
+
     private readonly errorMessageService: ErrorMessageService,
   ) {
     // Initialization code can go here if needed
@@ -30,10 +35,14 @@ export class ProductCategoriesController {
     try {
       const data =
         await this.productCategoriesService.createProductCategories(requestDto);
+
       return this.errorMessageService.success(
         data,
+
         true,
+
         'ProductCategories created successfully',
+
         {},
       );
     } catch (error) {
@@ -44,17 +53,23 @@ export class ProductCategoriesController {
   @Put(':id')
   async updateProductCategories(
     @Param('id') id: string,
+
     @Body() requestDto: ProductCategoriesRequestDto,
   ): Promise<SuccessResponseDto> {
     try {
       const data = await this.productCategoriesService.updateProductCategories(
         id,
+
         requestDto,
       );
+
       return this.errorMessageService.success(
         data,
+
         true,
+
         'ProductCategories updated successfully',
+
         {},
       );
     } catch (error) {
@@ -68,16 +83,21 @@ export class ProductCategoriesController {
   ): Promise<SuccessResponseDto> {
     try {
       const data = await this.productCategoriesService.getProductCategories(id);
+
       return this.errorMessageService.success(
         data,
+
         true,
+
         'ProductCategories retrieved successfully',
+
         {},
       );
     } catch (error) {
       throw this.errorMessageService.error(error);
     }
   }
+
   @Get()
   async getAllProductCategories(): Promise<any> {
     try {
@@ -86,6 +106,7 @@ export class ProductCategoriesController {
       throw this.errorMessageService.error(error);
     }
   }
+
   @Delete(':id')
   async deleteProductCategories(
     @Param('id') id: string,
@@ -93,10 +114,14 @@ export class ProductCategoriesController {
     try {
       const data =
         await this.productCategoriesService.deleteProductCategories(id);
+
       return this.errorMessageService.success(
         data,
+
         true,
+
         'ProductCategories deleted successfully',
+
         {},
       );
     } catch (error) {

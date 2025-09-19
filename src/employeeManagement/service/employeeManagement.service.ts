@@ -27,9 +27,7 @@ export class EmployeeService {
   async createemployee(requestDto: EmployeeRequestDto) {
     try {
       const findEmployee = await this.employeeRepository.findOne({
-        where: {
-          email_address: requestDto.email_address,
-        },
+        where: { email_address: requestDto.email_address },
       });
 
       if (findEmployee) {
@@ -39,15 +37,12 @@ export class EmployeeService {
         );
       }
 
-      // Find the last employee to determine the next series number
       const lastEmployee = await this.employeeRepository.findOne({
         order: [['createdAt', 'DESC']],
       });
 
       let nextSeriesNumber = 1;
       if (lastEmployee && lastEmployee.reference_number) {
-        // Use a regular expression to extract any number from the last reference_number.
-        // This makes the logic more robust and handles different formats.
         const match = lastEmployee.reference_number.match(/\d+/);
         if (match) {
           const lastSeriesNumber = parseInt(match[0], 10);
@@ -57,15 +52,11 @@ export class EmployeeService {
         }
       }
 
-      // Generate the date string in DDMMYY format as requested
       const dateString = moment().format('DDMMYY');
-
-      // Construct the new reference number
       const newReferenceNumber = `E${nextSeriesNumber}-${dateString}`;
-
       const hashedPassword = await bcrypt.hash(requestDto.password, 10);
 
-      const fields = {
+      const employeeFields = {
         reference_number: newReferenceNumber,
         reference_number_date: moment().format('YYYY-MM-DD HH:mm:ss'),
         employee_name: requestDto.employee_name,
@@ -76,16 +67,26 @@ export class EmployeeService {
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       } as any;
 
-      const employee = await this.employeeRepository.create(fields);
+      const employee = await this.employeeRepository.create(employeeFields);
 
-      if (employee) {
-        return new EmployeeDto(employee);
-      } else {
-        throw this.errorMessageService.GeneralErrorCore(
-          'Failed to create Employee',
-          200,
-        );
+      // Check for nested salary data
+      if (requestDto.salary) {
+        const { employee_id: _ignored, ...salaryData } = requestDto.salary;
+        const salaryFields = {
+          employee_id: employee.id,
+          ...salaryData,
+          reference_number: newReferenceNumber,
+          reference_number_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+          createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+          updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+        } as any;
+        await this.employeeSalaryRepository.create(salaryFields);
       }
+
+      const newEmployee = await this.employeeRepository.findByPk(employee.id, {
+        include: [EmployeeSalary],
+      });
+      return new EmployeeDto(newEmployee);
     } catch (error) {
       throw this.errorMessageService.CatchHandler(error);
     }
@@ -107,7 +108,7 @@ export class EmployeeService {
       }
       const payload = { sub: employee.id, email: employee.email_address };
       const token = await this.jwtService.signAsync(payload, {
-        secret: 'MY_SECRET_KEY', // inline secret (avoid separate file)
+        secret: 'MY_SECRET_KEY',
         expiresIn: '1h',
       });
 
@@ -149,25 +150,37 @@ export class EmployeeService {
         ? await bcrypt.hash(requestDto.password, 10)
         : oldEmployee.password;
 
-      const fields = {
-        // We do not update the reference_number as it's auto-generated
-        // reference_number: requestDto.reference_number,
-        //reference_number_date: requestDto.reference_number_date,
+      const employeeFields = {
         employee_name: requestDto.employee_name,
-
         email_address: requestDto.email_address,
         employee_type: requestDto.employee_type,
         password: hashedPassword,
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
       } as any;
 
-      const employee = await this.employeeRepository.update(fields, {
-        where: { id },
-        returning: true,
-      });
+      const [updatedCount] = await this.employeeRepository.update(
+        employeeFields,
+        {
+          where: { id },
+        },
+      );
 
-      if (employee && employee.length > 1) {
-        return new EmployeeDto(employee[1][0]);
+      if (updatedCount > 0) {
+        // Create a new salary record for the update if nested salary data is provided
+        if (requestDto.salary) {
+          const { employee_id, ...salaryData } = requestDto.salary;
+          const salaryFields = {
+            employee_id: id,
+            ...salaryData,
+            reference_number: oldEmployee.reference_number,
+            reference_number_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+            updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+          } as any;
+          await this.employeeSalaryRepository.create(salaryFields);
+        }
+        const updatedEmployee = await this.employeeRepository.findByPk(id);
+        return new EmployeeDto(updatedEmployee);
       } else {
         throw this.errorMessageService.GeneralErrorCore(
           'Failed to update employee',
@@ -181,7 +194,27 @@ export class EmployeeService {
 
   async getEmployee(id: string) {
     try {
-      const employee = await this.employeeRepository.findByPk(id);
+      const employee = await this.employeeRepository.findByPk(id, {
+        include: [
+          {
+            model: EmployeeSalary,
+            attributes: [
+              'id',
+              'monthly_salary',
+              'working_days',
+              'working_hour',
+              'over_time',
+              'leave_day',
+              'total_attempts_day',
+              'total_payable_salary',
+              'reference_number',
+              'reference_number_date',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ],
+      });
       if (!employee) {
         throw this.errorMessageService.GeneralErrorCore(
           'Employee not found',
@@ -196,7 +229,27 @@ export class EmployeeService {
 
   async getAllEmployees() {
     try {
-      const employees = await this.employeeRepository.findAll();
+      const employees = await this.employeeRepository.findAll({
+        include: [
+          {
+            model: EmployeeSalary,
+            attributes: [
+              'id',
+              'monthly_salary',
+              'working_days',
+              'working_hour',
+              'over_time',
+              'leave_day',
+              'total_attempts_day',
+              'total_payable_salary',
+              'reference_number',
+              'reference_number_date',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ],
+      });
       if (!employees || employees.length === 0) {
         throw this.errorMessageService.GeneralErrorCore(
           'NO Employee found',
@@ -218,12 +271,15 @@ export class EmployeeService {
           404,
         );
       }
+
       await this.employeeSalaryRepository.destroy({
         where: { employee_id: id },
       });
+
       const deleted = await this.employeeRepository.destroy({
         where: { id: id },
       });
+
       if (deleted) {
         return { message: 'Employee deleted successfully' };
       } else {

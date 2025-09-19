@@ -60,7 +60,7 @@ export class EmployeeSalary extends Model<EmployeeSalary> {
 
   @Column({
     type: DataType.NUMBER,
-    allowNull: false,
+    allowNull: true,
   })
   leave_day: number;
 
@@ -76,7 +76,7 @@ export class EmployeeSalary extends Model<EmployeeSalary> {
 
   @Column({
     type: DataType.TEXT,
-    allowNull: false,
+    allowNull: true,
   })
   reference_number: string;
 
@@ -98,7 +98,7 @@ export class EmployeeSalary extends Model<EmployeeSalary> {
 
   @Column({
     type: DataType.DATEONLY,
-    allowNull: false,
+    allowNull: true,
   })
   reference_number_date: Date;
 }

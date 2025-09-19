@@ -16,7 +16,7 @@ import { EmployeeService } from '../service/employeeManagement.service';
 import { JwtAuthGuard } from 'src/JwtAuthGuard/jwt_auth.guard';
 import { Public } from 'src/JwtAuthGuard/public.decorator';
 
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 @Controller('employe-managment')
 export class EmployeeController {
   constructor(

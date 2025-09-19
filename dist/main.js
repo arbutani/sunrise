@@ -27,7 +27,7 @@ async function bootstrap() {
             }, 422);
         },
     }));
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 3003);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
